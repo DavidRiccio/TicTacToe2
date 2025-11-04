@@ -1,28 +1,43 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 
-export function Square({ val, onPress }: { val: string; onPress: () => void }) {
+const styles = StyleSheet.create({
+  square: {
+    backgroundColor: '#fff',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1.5,
+    borderColor: '#e0e0e0',
+    margin: 1,
+    borderRadius: 8,
+  },
+  winning: {
+    backgroundColor: '#d1fae5',
+    borderColor: '#10b981',
+    borderWidth: 2,
+  },
+  text: {
+    fontWeight: '700',
+    color: '#1a1a1a',
+  },
+});
+
+interface SquareProps {
+  value: string;
+  onPress: () => void;
+  size: number;
+  fontSize: number;
+  isWinning?: boolean;
+}
+
+export function Square({ value, onPress, size, fontSize, isWinning }: SquareProps) {
   return (
-    <TouchableOpacity style={styles.square} onPress={onPress}>
-      <Text style={styles.squareText}>{val}</Text>
+    <TouchableOpacity
+      style={[styles.square, { width: size, height: size }, isWinning && styles.winning]}
+      onPress={onPress}
+      activeOpacity={0.7}
+    >
+      <Text style={[styles.text, { fontSize }]}>{value}</Text>
     </TouchableOpacity>
   );
 }
-
-const styles = StyleSheet.create({
-  square: {
-    width: '33.333%',
-    aspectRatio: 1,        // Hace cada cuadrado perfectamente cuadrado
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-    borderRightWidth: 1,
-    borderBottomWidth: 1,
-    borderColor: '#ccc',
-  },
-  squareText: {
-    fontSize: 60,          // Texto más grande para X y O
-    fontWeight: 'bold',
-    color: '#2c3e50',
-  },
-});

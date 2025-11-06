@@ -1,10 +1,10 @@
-import React from 'react';
+import { fetchAddDevice } from '@/lib/conection';
+import React, { useEffect } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View, useWindowDimensions } from 'react-native';
 import { calculateWinner, getWinningLine } from '../lib/gameLogic';
 import { Board } from './Board';
 import { PlayAgainButton } from './PlayAgainButton';
 import { ScoreBoard } from './ScoreBoard';
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -177,7 +177,11 @@ export function Game() {
   const isDraw = !winner && squares.every(square => square !== '');
   const winningLine = getWinningLine(squares, boardSize);
 
-  // Calcular tamaño más compacto para que el tablero siempre sea visible
+  useEffect(()=> {
+    const id = fetchAddDevice();
+  });
+
+
   const availableWidth = width - 24;
   const availableHeight = height - 200;
   const maxBoardSize = Math.min(availableWidth, availableHeight);

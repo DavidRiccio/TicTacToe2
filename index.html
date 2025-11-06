@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <button onclick="fetchDevices()">Fetch</button>
+    <button onclick="fetchAddDevice()">Add</button>
+</body>
+<script>
+
+const url = "http://127.0.0.1:5000/";
+
+async function fetchDevices() {
+    try {
+        const res = await fetch(`${url}devices`);
+        if (!res.ok) {
+            throw new Error(res.status === 404 ? "Dispositivos no encontrados" : "Error en la solicitud");
+        }
+        const data = await res.json();
+        console.log(data);  // Display the fetched data
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+async function fetchAddDevice() {
+    try {
+        const res = await fetch(`${url}devices`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({})
+        });
+        const data = await res.json();
+        console.log(data.device_id);
+        console.log('Respuesta:', data);
+        return data.device_id;
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+</script>
+</html>

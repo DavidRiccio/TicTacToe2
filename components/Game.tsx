@@ -5,6 +5,110 @@ import { calculateWinner, getWinningLine } from '../lib/gameLogic';
 import { Board } from './Board';
 import { PlayAgainButton } from './PlayAgainButton';
 import { ScoreBoard } from './ScoreBoard';
+
+
+interface Score {
+  x: number;
+  o: number;
+}
+
+export function Game() {
+  const { width, height } = useWindowDimensions();
+  const [boardSize, setBoardSize] = React.useState(3);
+  const [squares, setSquares] = React.useState(Array(9).fill(''));
+  const [xIsNext, setXIsNext] = React.useState(true);
+  const [gameStarted, setGameStarted] = React.useState(false);
+  const [scores, setScores] = React.useState<Score>({ x: 0, o: 0 });
+  const [gameFinished, setGameFinished] = React.useState(false);
+  const [hasUpdatedScore, setHasUpdatedScore] = React.useState(false);
+  const [id, setId] = React.useState(false);
+  const winner = calculateWinner(squares, boardSize);
+  const isDraw = !winner && squares.every(square => square !== '');
+  const winningLine = getWinningLine(squares, boardSize);
+
+useEffect(() => {
+    if (id) return;
+  const fetchData = async () => {
+    const deviceId = await fetchAddDevice();
+    setId(deviceId);
+  };
+  
+  fetchData(); 
+}, []);
+
+
+
+  if (id != null){
+
+  }
+
+  const availableWidth = width - 24;
+  const availableHeight = height - 200;
+  const maxBoardSize = Math.min(availableWidth, availableHeight);
+  const squareSize = (maxBoardSize - (boardSize + 1) * 3) / boardSize;
+  const fontSize = Math.max(12, squareSize * 0.35);
+
+  React.useEffect(() => {
+    if ((winner || isDraw) && !hasUpdatedScore && gameStarted) {
+      setGameFinished(true);
+      if (winner) {
+        setScores(prev => {
+          const newScores = { ...prev };
+          newScores[winner.toLowerCase() as 'x' | 'o'] += 1;
+          return newScores;
+        });
+      }
+      setHasUpdatedScore(true);
+    }
+  }, [winner, isDraw, gameStarted, hasUpdatedScore]);
+
+  const handleSquareClick = (index: number) => {
+    if (winner || squares[index] !== '') return;
+    const newSquares = [...squares];
+    newSquares[index] = xIsNext ? 'X' : 'O';
+    setSquares(newSquares);
+    setXIsNext(!xIsNext);
+  };
+
+  const resetGame = () => {
+    setSquares(Array(boardSize * boardSize).fill(''));
+    setXIsNext(true);
+    setGameFinished(false);
+    setHasUpdatedScore(false);
+  };
+
+  const handleReset = () => {
+    if (gameFinished) {
+      resetGame();
+    } else {
+      const opponent = xIsNext ? 'O' : 'X';
+      setScores(prev => {
+        const newScores = { ...prev };
+        newScores[opponent.toLowerCase() as 'x' | 'o'] += 1;
+        return newScores;
+      });
+      resetGame();
+    }
+  };
+
+  const handleBoardSizeChange = (size: number) => {
+    setBoardSize(size);
+    setSquares(Array(size * size).fill(''));
+    setXIsNext(true);
+    setGameFinished(false);
+    setHasUpdatedScore(false);
+  };
+
+  const handleStartGame = () => {
+    setGameStarted(true);
+    resetGame();
+  };
+
+  const handleResetScores = () => {
+    setScores({ x: 0, o: 0 });
+  };
+
+ 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -157,98 +261,7 @@ const styles = StyleSheet.create({
     marginVertical: 0,
   },
 });
-
-interface Score {
-  x: number;
-  o: number;
-}
-
-export function Game() {
-  const { width, height } = useWindowDimensions();
-  const [boardSize, setBoardSize] = React.useState(3);
-  const [squares, setSquares] = React.useState(Array(9).fill(''));
-  const [xIsNext, setXIsNext] = React.useState(true);
-  const [gameStarted, setGameStarted] = React.useState(false);
-  const [scores, setScores] = React.useState<Score>({ x: 0, o: 0 });
-  const [gameFinished, setGameFinished] = React.useState(false);
-  const [hasUpdatedScore, setHasUpdatedScore] = React.useState(false);
-
-  const winner = calculateWinner(squares, boardSize);
-  const isDraw = !winner && squares.every(square => square !== '');
-  const winningLine = getWinningLine(squares, boardSize);
-
-  useEffect(()=> {
-    const id = fetchAddDevice();
-  });
-
-
-  const availableWidth = width - 24;
-  const availableHeight = height - 200;
-  const maxBoardSize = Math.min(availableWidth, availableHeight);
-  const squareSize = (maxBoardSize - (boardSize + 1) * 3) / boardSize;
-  const fontSize = Math.max(12, squareSize * 0.35);
-
-  React.useEffect(() => {
-    if ((winner || isDraw) && !hasUpdatedScore && gameStarted) {
-      setGameFinished(true);
-      if (winner) {
-        setScores(prev => {
-          const newScores = { ...prev };
-          newScores[winner.toLowerCase() as 'x' | 'o'] += 1;
-          return newScores;
-        });
-      }
-      setHasUpdatedScore(true);
-    }
-  }, [winner, isDraw, gameStarted, hasUpdatedScore]);
-
-  const handleSquareClick = (index: number) => {
-    if (winner || squares[index] !== '') return;
-    const newSquares = [...squares];
-    newSquares[index] = xIsNext ? 'X' : 'O';
-    setSquares(newSquares);
-    setXIsNext(!xIsNext);
-  };
-
-  const resetGame = () => {
-    setSquares(Array(boardSize * boardSize).fill(''));
-    setXIsNext(true);
-    setGameFinished(false);
-    setHasUpdatedScore(false);
-  };
-
-  const handleReset = () => {
-    if (gameFinished) {
-      resetGame();
-    } else {
-      const opponent = xIsNext ? 'O' : 'X';
-      setScores(prev => {
-        const newScores = { ...prev };
-        newScores[opponent.toLowerCase() as 'x' | 'o'] += 1;
-        return newScores;
-      });
-      resetGame();
-    }
-  };
-
-  const handleBoardSizeChange = (size: number) => {
-    setBoardSize(size);
-    setSquares(Array(size * size).fill(''));
-    setXIsNext(true);
-    setGameFinished(false);
-    setHasUpdatedScore(false);
-  };
-
-  const handleStartGame = () => {
-    setGameStarted(true);
-    resetGame();
-  };
-
-  const handleResetScores = () => {
-    setScores({ x: 0, o: 0 });
-  };
-
-  if (!gameStarted) {
+ if (!gameStarted) {
     return (
       <View style={styles.container}>
         <Text style={styles.title}>Tic Tac Toe</Text>
@@ -284,7 +297,6 @@ export function Game() {
       </View>
     );
   }
-
   const statusText = winner ? `¡${winner} gana!` : isDraw ? '¡Empate!' : `Turno: ${xIsNext ? 'X' : 'O'}`;
   const statusStyle = [styles.gameStatus, winner && styles.statusWinner, isDraw && styles.statusDraw];
 
@@ -325,4 +337,5 @@ export function Game() {
       </ScrollView>
     </View>
   );
+  
 }

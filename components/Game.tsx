@@ -60,11 +60,6 @@ export function Game() {
 // Función para actualizar el tablero desde el servidor
 // Función para actualizar el tablero desde el servidor
 const updateBoardFromServer = (matchStatus: any) => {
-  console.log('==============================================');
-  console.log('=== UPDATE BOARD FROM SERVER - DETAILED DEBUG ===');
-  console.log('==============================================');
-  console.log('Full matchStatus:', JSON.stringify(matchStatus, null, 2));
-  
   // PRIMERO: Actualizar el tamaño del tablero si es necesario
   if (matchStatus.size && matchStatus.size !== boardSize) {
     console.log(`⚠ Updating board size from ${boardSize} to ${matchStatus.size}`);
@@ -76,30 +71,18 @@ const updateBoardFromServer = (matchStatus: any) => {
     console.log('📋 RAW BOARD FROM SERVER:');
     console.log(JSON.stringify(matchStatus.board, null, 2));
     
-    // Mostrar visualmente cómo está el board del servidor
-    console.log('📋 VISUAL REPRESENTATION (SERVER):');
     matchStatus.board.forEach((row: any[], rowIndex: number) => {
       console.log(`Row ${rowIndex}:`, row.map(cell => cell === '' ? '·' : cell).join(' | '));
     });
     
-    // Aplanar
     let flatBoard = matchStatus.board.flat();
     
-    console.log('📋 FLATTENED BOARD (what we will render):');
-    console.log(flatBoard);
-    
-    // Convertir valores null/undefined a string vacío
     flatBoard = flatBoard.map((cell: any, index: number) => {
       const value = (cell === null || cell === undefined || cell === '') ? '' : String(cell);
       console.log(`Index ${index}: "${value}"`);
       return value;
     });
     
-    console.log('📋 FINAL BOARD ARRAY:');
-    console.log(flatBoard);
-    
-    // Mostrar cómo se va a renderizar
-    console.log('📋 HOW IT WILL RENDER (visual):');
     for (let i = 0; i < matchStatus.size; i++) {
       const row = [];
       for (let j = 0; j < matchStatus.size; j++) {
@@ -143,12 +126,10 @@ const updateBoardFromServer = (matchStatus: any) => {
   
   // Verificar si la partida terminó
   if (matchStatus.winner) {
-    console.log('🏆 Game finished, winner:', matchStatus.winner);
     setGameFinished(true);
     setHasUpdatedScore(true);
   }
   
-  console.log('==============================================');
 };
 
 

@@ -1,9 +1,3 @@
-Claro. He actualizado la sección `## 📚 Documentación de Componentes` de tu `README.md` para incluir los enlaces de Markdown, asumiendo que los archivos de documentación están en el mismo directorio (por ejemplo, `Game.md`, `Board.md`, etc.).
-
-Aquí está tu archivo `README.md` actualizado:
-
------
-
 # Tic Tac Toe - React Native
 
 Aplicación de Tres en Raya (Tic Tac Toe) desarrollada en React Native con soporte para partidas offline y online multijugador.

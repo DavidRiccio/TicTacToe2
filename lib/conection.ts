@@ -1,13 +1,20 @@
-const url: string = "http://127.0.0.1:5000/"
-
-
+const url: string = "http://127.0.0.1:5000/";
 
 interface Stats {
-  wins: String;
-  losses: String;
-  ratio: String;
+  wins: string;
+  losses: string;
+  ratio: string;
 }
 
+interface MatchStatus {
+  board: string[][];
+  turn: string;
+  winner: string | null;
+  size: number;
+  players: {
+    [deviceId: string]: string;
+  };
+}
 
 export async function fetchDevices() {
   try {
@@ -21,8 +28,6 @@ export async function fetchDevices() {
     console.error('Error:', error);
   }
 }
-
-
 
 export async function fetchAddDevice() {
   try {
@@ -42,32 +47,39 @@ export async function fetchAddDevice() {
   }
 }
 
-
-export async function fetchSearchMatch(id: string) {
-  const res = await fetch(`${url}matches`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({})
-  })
-    .then(response => response.json())
-    .then(data => {
-      console.log('Respuesta:', data);
-    })
-    .catch(error => {
-      console.error('Error:', error);
+export async function fetchSearchMatch(deviceId: string, boardSize: number) {
+  try {
+    const res = await fetch(`${url}matches`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        device_id: deviceId,
+        size: boardSize
+      })
     });
+
+    if (!res.ok) {
+      throw new Error('Error al buscar partida');
+    }
+
+    const data = await res.json();
+    console.log('Partida encontrada:', data);
+    return data;
+
+  } catch (error) {
+    console.error('Error en fetchSearchMatch:', error);
+    throw error;
+  }
 }
-
-
 
 export async function fetchStats(id: string): Promise<Stats> {
   try {
     const res = await fetch(`${url}devices/${id}/info`);
 
     if (!res.ok) {
-      throw new Error(res.status === 404 ? "Dispositivos no encontrados" : "Error en la solicitud");
+      throw new Error(res.status === 404 ? "Estadísticas no encontradas" : "Error en la solicitud");
     }
 
     const data: Stats = await res.json();
@@ -80,17 +92,77 @@ export async function fetchStats(id: string): Promise<Stats> {
   }
 }
 
-
-export async function fetchWaitingStatus(id:string) {
-  try{
-    const res = await fetch(`${url}matches/waiting-status`);
-    if (!res.ok){
-      throw new Error(res.status === 404 ? "Dispositivo no encontrado":"error");
+export async function fetchWaitingStatus(id: string) {
+  try {
+    const res = await fetch(`${url}matches/waiting-status?device_id=${id}`);
+    
+    if (!res.ok) {
+      throw new Error(res.status === 404 ? "Dispositivo no encontrado" : "Error en la solicitud");
     }
-    const data: Stats = await res.json();
+    
+    const data = await res.json();
+    console.log('Waiting status:', data);
     return data;
-  }catch(error){
-
+    
+  } catch (error) {
+    console.error('Error en fetchWaitingStatus:', error);
+    throw error;
   }
-  
 }
+
+export async function fetchMatchStatus(matchId: string): Promise<MatchStatus> {
+  try {
+    const res = await fetch(`${url}matches/${matchId}`);
+    
+    if (!res.ok) {
+      throw new Error(res.status === 404 ? "Partida no encontrada" : "Error en la solicitud");
+    }
+    
+    const data: MatchStatus = await res.json();
+    console.log('Match status:', data);
+    return data;
+    
+  } catch (error) {
+    console.error('Error en fetchMatchStatus:', error);
+    throw error;
+  }
+}
+
+export async function fetchMakeMove(matchId: string, deviceId: string, x: number, y: number) {
+  const payload = {
+    device_id: deviceId,
+    x: x,
+    y: y
+  };
+  
+  const fullUrl = `${url}matches/${matchId}/moves`;
+  
+  console.log('=== MAKING MOVE ===');
+  console.log('Payload:', JSON.stringify(payload, null, 2));
+  
+  try {
+    const res = await fetch(fullUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    });
+
+    if (!res.ok) {
+      const errorText = await res.text();
+      console.error('❌ Error:', errorText);
+      throw new Error(`Error ${res.status}`);
+    }
+
+    const data = await res.json();
+    console.log('✓ Success');
+    return data;
+
+  } catch (error) {
+    console.error('❌ Fetch error:', error);
+    throw error;
+  }
+}
+

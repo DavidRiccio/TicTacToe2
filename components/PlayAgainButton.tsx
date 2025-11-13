@@ -3,13 +3,15 @@ import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 
 interface PlayAgainButtonProps {
   onPress: () => void;
-  text?: string;
+  gameFinished?: boolean;
 }
 
-export function PlayAgainButton({ onPress, text = "Jugar de nuevo" }: PlayAgainButtonProps) {
+export function PlayAgainButton({ onPress, gameFinished = false }: PlayAgainButtonProps) {
+  const buttonText = gameFinished ? 'Jugar de nuevo' : 'Rendirse';
+  
   return (
     <TouchableOpacity style={styles.button} onPress={onPress}>
-      <Text style={styles.buttonText}>{text}</Text>
+      <Text style={styles.buttonText}>{buttonText}</Text>
     </TouchableOpacity>
   );
 }

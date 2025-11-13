@@ -1,50 +1,165 @@
-# Welcome to your Expo app 👋
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+# Tic Tac Toe - React Native
+Aplicación de Tres en Raya (Tic Tac Toe) desarrollada en React Native con soporte para partidas offline y online multijugador.
 
-## Get started
+## 📋 Descripción
+Juego de Tres en Raya con las siguientes características:
 
-1. Install dependencies
+``Modo Offline:`` Juego local en el mismo dispositivo para dos jugadores
 
-   ```bash
-   npm install
-   ```
+``Modo Online:`` Partidas multijugador contra otros dispositivos en tiempo real
 
-2. Start the app
+``Tableros configurables:`` Desde 3x3 hasta 7x7
 
-   ```bash
-   npx expo start
-   ```
+``Sistema de puntuación:`` Seguimiento de victorias y derrotas
 
-In the output, you'll find options to open the app in a
+``Interfaz responsiva:`` Adaptable a diferentes tamaños de pantalla
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## 🚀 Características
+✅ **Modo offline y online**
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+✅ **Tableros de 3x3, 4x4, 5x5, 6x7, 7x7**
 
-## Get a fresh project
+✅ **Detección automática de ganador y empate**
 
-When you're ready, run:
+✅ **Resaltado de línea ganadora**
 
+✅ **Sistema de estadísticas por dispositivo**
+
+✅ **Sincronización en tiempo real en modo online**
+
+✅ **Polling automático para actualización de estado**
+
+✅ **UI moderna y limpia**
+
+## 🏗️ Estructura del Proyecto
+### Componentes Principales
+``Game.tsx`` - Componente principal que gestiona el estado del juego, modos offline/online y la lógica de coordinación
+
+``Board.tsx`` - Renderiza el tablero de juego con la matriz de cuadrados
+
+``Square.tsx`` - Componente individual de cada cuadrado del tablero
+
+``ScoreBoard.tsx`` - Muestra el marcador de victorias en modo offline
+
+``PlayAgainButton.tsx`` - Botón para reiniciar/rendirse en la partida
+
+``Stats.tsx``- Botón y modal para ver estadísticas del jugador
+
+``StatsView.tsx`` - Vista detallada de estadísticas
+
+## Utilidades
+``conection.ts`` - Funciones para comunicación con la API del servidor
+
+``gameLogic.ts`` - Lógica de detección de ganador y líneas ganadoras
+
+## 🔌 API
+El juego se conecta a un servidor Flask en http://127.0.0.1:5000/ hecho por el profesor con los siguientes endpoints:
+
+``POST /devices`` - Registrar un nuevo dispositivo
+
+``GET /devices/{id}/info ``- Obtener estadísticas del dispositivo
+
+``POST /matches ``- Buscar/crear una partida online
+
+``GET /matches/waiting-status ``- Verificar estado de búsqueda
+
+``GET /matches/{match_id} ``- Obtener estado de la partida
+
+``POST /matches/{match_id}/moves`` - Realizar un movimiento
+
+## 🎮 Flujo de Juego
+### Modo Offline
+
+Seleccionar tamaño del tablero (3x3 a 7x7)
+
+Iniciar juego offline
+
+Los jugadores alternan turnos en el mismo dispositivo
+
+El juego detecta ganador o empate automáticamente
+
+Se actualiza el marcador local
+
+Modo Online
+Seleccionar tamaño del tablero
+
+Buscar partida online
+
+El servidor empareja con otro jugador
+
+El servidor asigna X u O a cada jugador
+
+Los jugadores hacen movimientos cuando es su turno
+
+El tablero se sincroniza automáticamente cada segundo
+
+El juego detecta ganador o empate
+
+## 🛠️ Tecnologías
+``React Native`` - Framework principal
+
+``TypeScript`` - Tipado estático
+
+``React Hooks`` - Gestión de estado
+
+``Fetch API`` - Comunicación con el servidor
+
+``StyleSheet`` - Estilos nativos
+
+## 📱 Instalación y Uso
 ```bash
-npm run reset-project
+# Instalar dependencias
+npm install
+
+# Ejecutar en desarrollo
+npm start
+
+# Ejecutar en Android
+npm run android
+
+# Ejecutar en iOS
+npm run ios
 ```
+## 📚 Documentación de Componentes
+Para más detalles sobre cada componente, consulta:
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+``Game.tsx`` - Documentación
 
-## Learn more
+``Board.tsx`` - Documentación
 
-To learn more about developing your project with Expo, look at the following resources:
+``Square.tsx`` - Documentación
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+``ScoreBoard.tsx`` - Documentación
 
-## Join the community
+``PlayAgainButton.tsx`` - Documentación
 
-Join our community of developers creating universal apps.
+``Stats.tsx`` - Documentación
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+``StatsView.tsx`` - Documentación
+
+``Conexión API`` - Documentación
+
+``Lógica del Juego`` - Documentación
+
+## 🐛 Notas Técnicas
+Sincronización Cliente-Servidor
+El servidor maneja el tablero como una matriz 2D: board[fila][columna]. El cliente:
+
+Recibe el board 2D del servidor
+
+Lo aplana a 1D con .flat() para renderizar
+
+Al hacer click, convierte el índice a coordenadas: row = floor(index/size), col = index % size
+
+Envía al servidor: { device_id, x: row, y: col }
+
+El servidor actualiza board[x][y]
+
+Polling
+Búsqueda de partida: Polling cada 2 segundos a /matches/waiting-status
+
+Durante partida: Polling cada 1 segundo a /matches/{match_id} para sincronizar estado
+
+# 📄 Licencia
+Este proyecto fue desarrollado como práctica educativa

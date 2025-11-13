@@ -1,5 +1,3 @@
-
-
 # `Square.tsx` - Documentación de Props y Lógica
 
 El componente `Square` es la unidad fundamental del tablero. Es, literalmente, la "casilla" en la que se puede hacer clic. Es un componente `TouchableOpacity` que muestra un valor (`'X'` o `'O'`) y puede cambiar su apariencia si forma parte de una línea ganadora.

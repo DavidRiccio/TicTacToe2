@@ -1,11 +1,3 @@
-¡Entendido\! Quieres que documente el componente `Board.tsx` pero usando el estilo detallado del archivo `Game.md` que me pasaste, enfocándome en sus partes internas.
-
-Aquí hay una pequeña observación: tu componente `Board.tsx` es un componente **presentacional** (o "tonto", en el buen sentido). A diferencia de `Game.md`, no maneja su propio `useState`, `useEffect` o lógica de juego. Su trabajo es recibir `props` y renderizar una cuadrícula.
-
-Así que, en lugar de "Estados", documentaré sus "Props" y su "Lógica de Renderizado" usando el formato que te gustó.
-
------
-
 # `Board.tsx` - Documentación de Props y Lógica Interna
 
 Este componente renderiza la cuadrícula del juego. Es un componente controlado, lo que significa que toda la información que muestra (`squares`, `winningLine`) y las acciones que ejecuta (`onSquareClick`) se las proporciona un componente padre (como `Game.tsx`).
